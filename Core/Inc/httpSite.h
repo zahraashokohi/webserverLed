@@ -9,4 +9,17 @@
 #include <string.h>
 #include <stdio.h>
 
+typedef struct
+{
+    char name[32];
+    char tunerMode[8];
+    char polarization[2];
+    uint32_t tunerSymbolRate;
+    uint32_t tunerFrequency;
+    float satelliteLon;
+
+}preset_t;
+
+
+void http_server_init(void);
 #endif

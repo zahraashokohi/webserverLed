@@ -1,31 +1,7 @@
 #include "httpSite.h"
 
 static uint8_t fileBuffer[1024] = {0};
-
-const char* LedCGI_Handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
-{
-    for (int i = 0; i < iNumParams; i++)
-    {
-        if (strcmp(pcParam[i], "led") == 0)
-        {
-            if (strcmp(pcValue[i], "on") == 0)
-            {
-                HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_RESET);
-                HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
-                HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_RESET);
-            }
-            else if (strcmp(pcValue[i], "off") == 0)
-            {
-                HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
-                HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
-                HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
-            }
-        }
-    }
-
-    return "/index.html";
-}
-
+preset_t gpresets;
 
 int fs_open_custom(struct fs_file *file, const char *name) {
   if (strcmp(name, "/timestamp.html") == 0) {
@@ -79,10 +55,63 @@ int fs_read_custom(struct fs_file *file, char *buffer, int count) {
 
   return (file->len - file->index) > 0 ? bytesLeft : FS_READ_EOF;
 }
+
+
+const char* LedCGI_Handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
+{
+    for (int i = 0; i < iNumParams; i++)
+    {
+        if (strcmp(pcParam[i], "led") == 0)
+        {
+            if (strcmp(pcValue[i], "on") == 0)
+            {
+                HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_RESET);
+            }
+            else if (strcmp(pcValue[i], "off") == 0)
+            {
+                HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
+                HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
+                HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
+            }
+        }
+    }
+
+    return "/index.html";
+}
+
+const char* PresetsCGI_Handler (int iIndex, int iNumParams,char *pcParam[],char *pcValue[])
+{
+    for (int i = 0; i < iNumParams; i++)
+    {
+        if (!strcmp(pcParam[i], "name"))
+            strncpy(gpresets.name, pcValue[i], sizeof(gpresets.name));
+
+        else if (!strcmp(pcParam[i], "tunerMode"))
+            strncpy(gpresets.tunerMode, pcValue[i], sizeof(gpresets.tunerMode));
+
+        else if (!strcmp(pcParam[i], "polarization"))
+            strncpy(gpresets.polarization, pcValue[i], sizeof(gpresets.polarization));
+
+        else if (!strcmp(pcParam[i], "tunerSymbolRate"))
+        	gpresets.tunerSymbolRate = atoi(pcValue[i]);
+
+        else if (!strcmp(pcParam[i], "tunerFrequency"))
+        	gpresets.tunerFrequency = atoi(pcValue[i]);
+
+        else if (!strcmp(pcParam[i], "satelliteLon"))
+        	gpresets.satelliteLon = atof(pcValue[i]);
+    }
+// save to flash
+
+    return "/presets.html";
+}
+
 const tCGI CgiTable[] =
 {
     {"/",                LedCGI_Handler},
-   // {"/saveSettings.cgi", SaveSettingsCGI},
+    {"/savePresets.cgi", PresetsCGI_Handler},
    // {"/motor.cgi",        MotorCGI_Handler},
    // {"/move.cgi",         MoveCGI_Handler}
 };
