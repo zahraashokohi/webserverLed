@@ -14,7 +14,7 @@ body {
 /* generic buttons */
 .btn {
     padding: 15px 40px;
-    border: 2px solid #333;
+    border: 0px solid #333;
     border-radius: 6px;
     cursor: pointer;
     margin: 12px;
@@ -22,11 +22,11 @@ body {
 }
 
 /* colors */
-.btn-green  { background: #4CAF50; color: white; }
-.btn-blue   { background: #2196F3; color: white; }
-.btn-pink   { background: #E91E63; color: white; }
-.btn-purple { background: #9C27B0; color: white; }
-.btn-red    { background: #F44336; color: white; }
+.btn-green  { background: #7f94b4; color: white; }
+.btn-blue   { background: #7f94b4; color: white; }/*beam*/
+.btn-pink   { background: #7f94b4; color: white; }/*park*/
+.btn-purple { background: #7f94b4; color: white; }/*stop*/
+.btn-red    { background: #7f94b4; color: white; }
 
 /* active effect */
 .active {
@@ -57,7 +57,7 @@ body {
 .move-btn {
     width: 55px;
     height: 55px;
-    background: #4CAF50;
+    background: #ffffff;
     border: 1px solid #333;
     border-radius: 6px;
     cursor: pointer;
@@ -98,6 +98,19 @@ body {
     font-size: 15px;
     line-height: 26px;
 }
+.label {
+    font-size: 18px;
+    color: #555;
+    font-weight: normal;
+}
+
+.value {
+    font-size: 18px;
+    color: #000;
+    font-weight: bold;
+    margin-left: 6px;
+}
+
 
 
 </style>
@@ -154,9 +167,12 @@ function resetData() {
 <body>
 
 <!-- top menu -->
+ <div>
+    <h1> AutoPount Antenna</h1>
+</div>
 <div>
     <button class="btn btn-green" onclick="location.href='/settings.html'">Settings</button>
-    <button class="btn btn-green" onclick="location.href='/presets.html'">Presets</button>
+    <button class="btn btn-green" onclick="location.href='/preset.html'">Presets</button>
 </div>
 
 <!-- realtime -->
@@ -165,25 +181,27 @@ function resetData() {
 
     <div class="rt-container">
 
-       <!-- RIGHT -->
-        <div class="rt-right">
-            Beam: <span id="beam">0</span><br>
-            Heading: <span id="heading">0</span><br>
-            Lat: <span id="lat">0</span><br>
-            Lon: <span id="lon">0</span>
-        </div>
-     
-        <!-- LEFT -->
-        <div class="rt-left">
-            Azimuth: <span id="az">STOP</span><br>
-            Elevation: <span id="el">STOP</span><br>
-            Polar: <span id="pol">STOP</span>
-        </div>
+    <div class="rt-right">
+    <div><span class="label">Beam :</span> <span class="value" id="beam">0</span></div>
+    <div><span class="label">Heading :</span> <span class="value" id="heading">0</span></div>
+    <div><span class="label">Lat :</span> <span class="value" id="lat">0</span></div>
+    <div><span class="label">Lon :</span> <span class="value" id="lon">0</span></div>
+    </div>
+
+
+    <div class="rt-left">
+    <div><span class="label">Azimuth :</span> <span class="value" id="az">STOP</span></div>
+    <div><span class="label">Elevation :</span> <span class="value" id="el">STOP</span></div>
+    <div><span class="label">Polar :</span> <span class="value" id="pol">STOP</span></div>
+    </div>
+
 
         
     </div>
 </div>
-
+ <div>
+    <h1> MoveMotor</h1>
+</div>
 <!-- command buttons -->
 <div>
     <button class="btn btn-pink"   onclick="sendCmd('park', this)">Park</button>
