@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "httpSite.h"
+#include "ALCD.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,7 +92,10 @@ int main(void)
   MX_GPIO_Init();
   MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
-  //httpd_init();
+  ALCD_init(16, 2);
+  ALCD_clear();
+  ALCD_printfXY(0, 0, "Search this IP");
+  ALCD_printfXY(0, 1, "192.168.1.200");
   http_server_init();
   /* USER CODE END 2 */
 
