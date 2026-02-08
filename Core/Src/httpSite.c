@@ -25,16 +25,6 @@ const char* LedCGI_Handler(int iIndex, int iNumParams, char *pcParam[], char *pc
 
     return "/index.html";
 }
-static const tCGI LedCGI[] =
-{
-    {"/", LedCGI_Handler}
-};
-void http_server_init(void)
-{
-    httpd_init();
-    http_set_cgi_handlers(LedCGI, 1);
-}
-
 
 
 int fs_open_custom(struct fs_file *file, const char *name) {
@@ -89,3 +79,17 @@ int fs_read_custom(struct fs_file *file, char *buffer, int count) {
 
   return (file->len - file->index) > 0 ? bytesLeft : FS_READ_EOF;
 }
+const tCGI CgiTable[] =
+{
+    {"/",                LedCGI_Handler},
+   // {"/saveSettings.cgi", SaveSettingsCGI},
+   // {"/motor.cgi",        MotorCGI_Handler},
+   // {"/move.cgi",         MoveCGI_Handler}
+};
+void http_server_init(void)
+{
+    httpd_init();
+    http_set_cgi_handlers(CgiTable,sizeof(CgiTable)/sizeof(tCGI));
+}
+
+
