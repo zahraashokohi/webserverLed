@@ -35,3 +35,7 @@ To make the data accessible to the project:
 <p align="center">
   <img src="photo_2026-02-08_13-57-52.jpg" width="500" title="STM32 Web Server">
 </p>
+
+<p align="center">
+  <img src="page1.png" width="500" title="STM32 Web Server">
+</p>
