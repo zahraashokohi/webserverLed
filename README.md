@@ -32,3 +32,6 @@ To make the data accessible to the project:
 * **Accessing the Server:** Open a web browser on any device in the same network and type the displayed IP address.
 
 ---
+<p align="center">
+  <img src="photo_2026-02-08_13-57-52.jpg" width="500" title="STM32 Web Server">
+</p>
