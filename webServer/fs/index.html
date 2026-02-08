@@ -1,41 +1,213 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>STM32 Controller</title>
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            background-color: #f2f2f2;
-        }
-        .menu {
-            margin-top: 50px;
-        }
-        .menu a {
-            display: block;
-            width: 200px;
-            margin: 15px auto;
-            padding: 15px;
-            background-color: #2c7be5;
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            border-radius: 8px;
-        }
-        .menu a:hover {
-            background-color: #1a5fc4;
-        }
-    </style>
+<meta charset="utf-8">
+<title>Main Control</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f2f2f2;
+    text-align: center;
+}
+
+/* generic buttons */
+.btn {
+    padding: 15px 40px;
+    border: 2px solid #333;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 12px;
+    font-size: 16px;
+}
+
+/* colors */
+.btn-green  { background: #4CAF50; color: white; }
+.btn-blue   { background: #2196F3; color: white; }
+.btn-pink   { background: #E91E63; color: white; }
+.btn-purple { background: #9C27B0; color: white; }
+.btn-red    { background: #F44336; color: white; }
+
+/* active effect */
+.active {
+    background: white !important;
+    color: black !important;
+}
+
+/* realtime data spacing */
+.realtime {
+    margin: 25px 0;
+}
+
+.realtime span {
+    display: inline-block;
+    width: 140px;
+    margin: 6px 0;
+}
+
+/* move buttons */
+.move-container {
+    margin-top: 30px;
+}
+
+.move-row {
+    margin: 12px 0;
+}
+
+.move-btn {
+    width: 55px;
+    height: 55px;
+    background: #4CAF50;
+    border: 1px solid #333;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 0 12px;
+    font-size : 28px;
+}
+
+.move-btn.active {
+    background: white;
+}
+
+/* arrows */
+.up::after    { content:"▲"; }
+.down::after  { content:"▼"; }
+.left::after  { content:"◀"; }
+.right::after { content:"▶"; }
+.rotl::after  { content:"↺"; }
+.rotr::after  { content:"↻"; }
+
+.step {
+    display: inline-block;
+    width: 55px;
+    height: 55px;
+    line-height: 55px;
+    border: 1px solid #333;
+    background: white;
+    margin: 0 12px;
+}
+.rt-container {
+    display: flex;
+    justify-content: center;
+    gap: 60px;   /* فاصله بین چپ و راست */
+    margin-top: 15px;
+}
+
+.rt-left, .rt-right {
+    text-align: left;
+    font-size: 15px;
+    line-height: 26px;
+}
+
+
+</style>
+
+<script>
+/* send command */
+function sendCmd(cmd, btn) {
+    btn.classList.add("active");
+    fetch("/cmd.cgi?cmd=" + cmd);
+    setTimeout(() => btn.classList.remove("active"), 150);
+}
+
+/* realtime update */
+let rtTimer = null;
+
+function toggleRealtime(btn) {
+    btn.classList.add("active");
+
+    if (rtTimer === null) {
+        rtTimer = setInterval(updateStatus, 1000);
+    } else {
+        clearInterval(rtTimer);
+        rtTimer = null;
+        resetData();
+    }
+
+    setTimeout(() => btn.classList.remove("active"), 150);
+}
+
+/* update data */
+function updateStatus() {
+    fetch("/status.cgi")
+    .then(r => r.json())
+    .then(d => {
+        beam.innerText = d.beam;
+        heading.innerText = d.heading;
+        lat.innerText = d.lat;
+        lon.innerText = d.lon;
+        az.innerText = d.az;
+        el.innerText = d.el;
+        pol.innerText = d.pol;
+    });
+}
+
+/* reset values */
+function resetData() {
+    beam.innerText = heading.innerText =
+    lat.innerText = lon.innerText = "0";
+    az.innerText = el.innerText = pol.innerText = "STOP";
+}
+</script>
 </head>
+
 <body>
 
-<h1>Main Menu</h1>
+<!-- top menu -->
+<div>
+    <button class="btn btn-green" onclick="location.href='/settings.html'">Settings</button>
+    <button class="btn btn-green" onclick="location.href='/presets.html'">Presets</button>
+</div>
 
-<div class="menu">
-    <a href="/motor.html">Motor Control</a>
-    <a href="/preset.html">Presets</a>
-    <a href="/settings.html">Settings</a>
+<!-- realtime -->
+<div class="realtime">
+    <button class="btn btn-red" onclick="toggleRealtime(this)">Realtime Data</button>
+
+    <div class="rt-container">
+
+       <!-- RIGHT -->
+        <div class="rt-right">
+            Beam: <span id="beam">0</span><br>
+            Heading: <span id="heading">0</span><br>
+            Lat: <span id="lat">0</span><br>
+            Lon: <span id="lon">0</span>
+        </div>
+     
+        <!-- LEFT -->
+        <div class="rt-left">
+            Azimuth: <span id="az">STOP</span><br>
+            Elevation: <span id="el">STOP</span><br>
+            Polar: <span id="pol">STOP</span>
+        </div>
+
+        
+    </div>
+</div>
+
+<!-- command buttons -->
+<div>
+    <button class="btn btn-pink"   onclick="sendCmd('park', this)">Park</button>
+    <button class="btn btn-blue"   onclick="sendCmd('beam', this)">Beam</button>
+    <button class="btn btn-purple" onclick="sendCmd('stop', this)">Stop</button>
+</div>
+
+<!-- move -->
+<div class="move-container">
+    <div class="move-row">
+        <button class="move-btn up" onclick="sendCmd('up', this)"></button>
+    </div>
+    <div class="move-row">
+        <button class="move-btn left" onclick="sendCmd('left', this)"></button>
+        <span class="step">0.1</span>
+        <button class="move-btn right" onclick="sendCmd('right', this)"></button>
+    </div>
+    <div class="move-row">
+        <button class="move-btn down" onclick="sendCmd('down', this)"></button>
+    </div>
+    <div class="move-row">
+        <button class="move-btn rotl" onclick="sendCmd('rotl', this)"></button>
+        <button class="move-btn rotr" onclick="sendCmd('rotr', this)"></button>
+    </div>
 </div>
 
 </body>
