@@ -3,7 +3,8 @@
 static uint8_t fileBuffer[1024] = {0};
 preset_t 			gpresets;
 realTimeData  realData;
-
+const char movement[2][8] = {"STOP","MOVE"};
+uint8_t changeState = 0;
 int fs_open_custom(struct fs_file *file, const char *name) {
   if (strcmp(name, "/timestamp.html") == 0) {
     file->len = snprintf((char*) fileBuffer, sizeof(fileBuffer) - 1, "%u", HAL_GetTick());
@@ -51,7 +52,14 @@ if (strcmp(name, "/status.json") == 0)
             realData.elevation,
             realData.polar
         );
-
+        realData.beamValue++;
+        realData.heading+=2;
+        realData.locationlat +=0.1;
+        realData.locationLong +=0.1;
+        changeState = !changeState;
+        strcpy(realData.Azimuth, movement[changeState]);
+	      strcpy(realData.elevation, movement[changeState]);
+	      strcpy(realData.polar, movement[changeState]);
         file->data  = (const char*)fileBuffer;
         file->index = 0;
         file->flags = 0;
@@ -194,8 +202,8 @@ void http_server_init(void)
 {
 	 realData.beamValue = 1.0;
 	    realData.heading = 0.0;
-	    realData.locationlat = 0.0;
-	    realData.locationLong = 0.0;
+	    realData.locationlat = 35.7124187;
+      realData.locationLong = 51.2902461;
 	    strcpy(realData.Azimuth, "STOP");
 	    strcpy(realData.elevation, "STOP");
 	    strcpy(realData.polar, "STOP");

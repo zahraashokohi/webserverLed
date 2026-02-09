@@ -26,6 +26,7 @@
 /* USER CODE BEGIN Includes */
 #include "httpSite.h"
 #include "ALCD.h"
+uint32_t  realtime = 0;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,7 +105,8 @@ int main(void)
   while (1)
   {
   	MX_LWIP_Process();
-
+  	//realtime++;
+  	//ALCD_printfXY(0, 1, "%d", realtime);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
