@@ -130,8 +130,8 @@ const char* status_cgi_handler(int iIndex, int iNumParams, char *pcParam[], char
 				realData.polar
     );
 
-    httpd_resp_set_hdr("Content-Type", "application/json");
-    httpd_resp_send(json, strlen(json));
+    //httpd_resp_set_hdr("Content-Type", "application/json");
+   // httpd_resp_send(json, strlen(json));
 
     return NULL;
 }
