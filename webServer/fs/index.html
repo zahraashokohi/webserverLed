@@ -123,7 +123,21 @@ function sendCmd(cmd, btn) {
     setTimeout(() => btn.classList.remove("active"), 150);
 }
 
+
 /* realtime update */
+let beam, heading, lat, lon, az, el, pol;
+
+window.onload = function () {
+    beam = document.getElementById("beam");
+    heading = document.getElementById("heading");
+    lat = document.getElementById("lat");
+    lon = document.getElementById("lon");
+    az = document.getElementById("az");
+    el = document.getElementById("el");
+    pol = document.getElementById("pol");
+};
+
+
 let rtTimer = null;
 
 function toggleRealtime(btn) {
@@ -134,25 +148,24 @@ function toggleRealtime(btn) {
     } else {
         clearInterval(rtTimer);
         rtTimer = null;
-        resetData();
+     //   resetData();
     }
 
     setTimeout(() => btn.classList.remove("active"), 150);
 }
 
-/* update data */
+// تابع updateStatus را به این شکل تغییر دهید:
 function updateStatus() {
-    fetch("/status.cgi")
-    .then(r => r.json())
-    .then(d => {
-        beam.innerText = d.beam;
-        heading.innerText = d.heading;
-        lat.innerText = d.lat;
-        lon.innerText = d.lon;
-        az.innerText = d.az;
-        el.innerText = d.el;
-        pol.innerText = d.pol;
-    });
+    fetch("/status.shtml?t=" + Date.now())
+  .then(res => res.text())
+  .then(txt => {
+     console.log("RAW RESPONSE:", txt);
+     return JSON.parse(txt);
+  })
+  .then(data => {
+     console.log("PARSED:", data);
+  })
+  .catch(err => console.error(err));
 }
 
 /* reset values */
@@ -182,17 +195,17 @@ function resetData() {
     <div class="rt-container">
 
     <div class="rt-right">
-    <div><span class="label">Beam :</span> <span class="value" id="beam">0</span></div>
-    <div><span class="label">Heading :</span> <span class="value" id="heading">0</span></div>
-    <div><span class="label">Lat :</span> <span class="value" id="lat">0</span></div>
-    <div><span class="label">Lon :</span> <span class="value" id="lon">0</span></div>
+    <div><span class="label">Beam :</span> <span class="value" id="beam"> </span></div>
+    <div><span class="label">Heading :</span> <span class="value" id="heading"> </span></div>
+    <div><span class="label">Lat :</span> <span class="value" id="lat"> </span></div>
+    <div><span class="label">Lon :</span> <span class="value" id="lon"> </span></div>
     </div>
 
 
     <div class="rt-left">
-    <div><span class="label">Azimuth :</span> <span class="value" id="az">STOP</span></div>
-    <div><span class="label">Elevation :</span> <span class="value" id="el">STOP</span></div>
-    <div><span class="label">Polar :</span> <span class="value" id="pol">STOP</span></div>
+    <div><span class="label">Azimuth :</span> <span class="value" id="az">  </span></div>
+    <div><span class="label">Elevation :</span> <span class="value" id="el"> </span></div>
+    <div><span class="label">Polar :</span> <span class="value" id="pol"> </span></div>
     </div>
 
 
