@@ -148,7 +148,7 @@ function toggleRealtime(btn) {
     } else {
         clearInterval(rtTimer);
         rtTimer = null;
-     //   resetData();
+        resetData();
     }
 
     setTimeout(() => btn.classList.remove("active"), 150);
@@ -156,16 +156,17 @@ function toggleRealtime(btn) {
 
 // تابع updateStatus را به این شکل تغییر دهید:
 function updateStatus() {
-    fetch("/status.shtml?t=" + Date.now())
-  .then(res => res.text())
-  .then(txt => {
-     console.log("RAW RESPONSE:", txt);
-     return JSON.parse(txt);
-  })
+   fetch("/status.json?t=" + Date.now())
+  .then(response => response.json())
   .then(data => {
-     console.log("PARSED:", data);
-  })
-  .catch(err => console.error(err));
+     beam.innerText = data.beam;
+     heading.innerText = data.heading;
+     lat.innerText = data.lat;
+     lon.innerText = data.lon;
+     az.innerText = data.az;
+     el.innerText = data.el;
+     pol.innerText = data.pol;
+  });
 }
 
 /* reset values */

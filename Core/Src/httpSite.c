@@ -31,6 +31,33 @@ int fs_open_custom(struct fs_file *file, const char *name) {
     file->flags = 0;
     return 1;
   }
+if (strcmp(name, "/status.json") == 0)
+    {
+        file->len = snprintf((char*)fileBuffer, sizeof(fileBuffer),
+            "{"
+            "\"beam\":%.2f,"
+            "\"heading\":%.2f,"
+            "\"lat\":%.4f,"
+            "\"lon\":%.4f,"
+            "\"az\":\"%s\","
+            "\"el\":\"%s\","
+            "\"pol\":\"%s\""
+            "}",
+            realData.beamValue,
+            realData.heading,
+            realData.locationlat,
+            realData.locationLong,
+            realData.Azimuth,
+            realData.elevation,
+            realData.polar
+        );
+
+        file->data  = (const char*)fileBuffer;
+        file->index = 0;
+        file->flags = 0;
+        return 1;
+    }
+
 
 
 
@@ -175,11 +202,6 @@ void http_server_init(void)
     httpd_init();
 
     http_set_cgi_handlers(CgiTable,sizeof(CgiTable)/sizeof(tCGI));
-    http_set_ssi_handler(
-        ssi_handler,
-        ssi_tags,
-        sizeof(ssi_tags) / sizeof(ssi_tags[0])
-    );
 
 
 }
