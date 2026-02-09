@@ -1,8 +1,8 @@
 #include "httpSite.h"
 
 static uint8_t fileBuffer[1024] = {0};
-preset_t gpresets;
-
+preset_t 			gpresets;
+realTimeData  realData;
 int fs_open_custom(struct fs_file *file, const char *name) {
   if (strcmp(name, "/timestamp.html") == 0) {
     file->len = snprintf((char*) fileBuffer, sizeof(fileBuffer) - 1, "%u", HAL_GetTick());
@@ -107,12 +107,39 @@ const char* PresetsCGI_Handler (int iIndex, int iNumParams,char *pcParam[],char 
 
     return "/presets.html";
 }
+const char* status_cgi_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
+{
+    static char json[256];
 
+    snprintf(json, sizeof(json),
+        "{"
+        "\"beam\":%.4f,"
+        "\"heading\":%.4f,"
+        "\"lat\":%.4f,"
+        "\"lon\":%.4f,"
+        "\"az\":\"%s\","
+        "\"el\":\"%s\","
+        "\"pol\":\"%s\""
+        "}",
+				realData.beamValue,
+				realData.heading,
+				realData.locationlat,
+				realData.locationLong,
+				realData.Azimuth,
+				realData.elevation,
+				realData.polar
+    );
+
+    httpd_resp_set_hdr("Content-Type", "application/json");
+    httpd_resp_send(json, strlen(json));
+
+    return NULL;
+}
 const tCGI CgiTable[] =
 {
     {"/",                LedCGI_Handler},
     {"/savePresets.cgi", PresetsCGI_Handler},
-   // {"/motor.cgi",        MotorCGI_Handler},
+    {"/status.cgi",        status_cgi_handler},
    // {"/move.cgi",         MoveCGI_Handler}
 };
 void http_server_init(void)

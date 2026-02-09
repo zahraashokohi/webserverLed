@@ -20,6 +20,19 @@ typedef struct
 
 }preset_t;
 
+typedef enum{
+	stop ,
+	move,
+}moving_t;
 
+typedef struct{
+	float 		beamValue;
+	float			heading;
+	float     locationlat;
+	float     locationLong;
+	char      Azimuth[8];
+	char      polar[8];
+	char      elevation[8];
+}realTimeData;
 void http_server_init(void);
 #endif
